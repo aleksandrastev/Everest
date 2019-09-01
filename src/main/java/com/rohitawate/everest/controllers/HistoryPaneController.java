@@ -19,6 +19,8 @@ package com.rohitawate.everest.controllers;
 import com.rohitawate.everest.controllers.search.SearchablePaneController;
 import com.rohitawate.everest.state.ComposerState;
 import com.rohitawate.everest.sync.SyncManager;
+
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.input.MouseButton;
@@ -29,15 +31,15 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class HistoryPaneController extends SearchablePaneController<ComposerState> {
-    private List<Consumer<ComposerState>> stateClickHandler = new LinkedList<>();
+	private List<Consumer<ComposerState>> stateClickHandler = new LinkedList<>();
 	private SyncManager syncManager;
 
 	@Override
-    protected List<ComposerState> loadInitialEntries() {
+	protected List<ComposerState> loadInitialEntries() {
 		return syncManager.getHistory();
 	}
 
-    protected SearchEntry<ComposerState> createEntryFromState(ComposerState state) throws IOException {
+	protected SearchEntry<ComposerState> createEntryFromState(ComposerState state) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/homewindow/HistoryItem.fxml"));
 		Parent historyItem = loader.load();
 
@@ -53,17 +55,22 @@ public class HistoryPaneController extends SearchablePaneController<ComposerStat
 		return new SearchEntry<>(historyItem, controller);
 	}
 
-    private void handleClick(ComposerState state) {
-        for (Consumer<ComposerState> consumer : stateClickHandler) {
+	private void handleClick(ComposerState state) {
+		for (Consumer<ComposerState> consumer : stateClickHandler) {
 			consumer.accept(state);
 		}
 	}
 
-    public void addItemClickHandler(Consumer<ComposerState> handler) {
+	public void addItemClickHandler(Consumer<ComposerState> handler) {
 		stateClickHandler.add(handler);
 	}
 
 	public void setSyncManager(SyncManager syncManager) {
 		this.syncManager = syncManager;
+	}
+
+	@FXML
+	private void cleanSearchHistory() {
+		syncManager.clearHistory();
 	}
 }
