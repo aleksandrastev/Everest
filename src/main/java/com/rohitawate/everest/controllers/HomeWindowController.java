@@ -34,6 +34,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -47,6 +49,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class HomeWindowController implements Initializable {
@@ -206,14 +209,32 @@ public class HomeWindowController implements Initializable {
         onTabSwitched(prevState, prevTab, newTab);
 
         newTab.setOnCloseRequest(e -> {
-            removeTab(newTab);
+//            removeTab(newTab);
+//
+//            // Closes the application if the last tab is closed
+//            if (tabPane.getTabs().size() == 0) {
+//                saveState();
+//                Stage thisStage = (Stage) homeWindowSP.getScene().getWindow();
+//                thisStage.close();
+//            }
+        	
+        	if (tabPane.getTabs().size() == 1) {
+				Alert alert = new Alert(Alert.AlertType.WARNING);
+				alert.setTitle("Warning");
+				alert.setHeaderText("Are you sure you want to leave?");
+				alert.setResizable(false);
+				alert.setContentText("Select okay or cancel this alert.");
+				Optional<ButtonType> result = alert.showAndWait();
+				if (result.get() == ButtonType.OK) {
+					removeTab(newTab);
+					saveState();
+					Stage thisStage = (Stage) homeWindowSP.getScene().getWindow();
+					thisStage.close();
+				} else {
+					removeTab(newTab);
+				}
 
-            // Closes the application if the last tab is closed
-            if (tabPane.getTabs().size() == 0) {
-                saveState();
-                Stage thisStage = (Stage) homeWindowSP.getScene().getWindow();
-                thisStage.close();
-            }
+			}
         });
     }
 
